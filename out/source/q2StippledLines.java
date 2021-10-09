@@ -119,7 +119,7 @@ public void stippledOutline(int x1, int y1, int x2, int y2, int radius, String p
 
     }
 
-     if(patternLocation >= pattern.length()-1 || patternLocation < 0){
+    if(patternLocation >= pattern.length()-1 || patternLocation < 0){
         patternLocation = 0;
     }
     else {
@@ -128,11 +128,20 @@ public void stippledOutline(int x1, int y1, int x2, int y2, int radius, String p
 
     currentChar = pattern.charAt(patternLocation);
 
-    if(currentX != x2 && currentY != y2){
+    if(currentX != x2 || currentY != y2){
 
       if(lastWasDash){
         if (currentChar=='-'){ 
-         drawDash(currentX,currentY,perpLine.x,perpLine.y, currentX-x2, currentY-y2);
+         stroke(255,165,0);
+          beginShape(LINES);
+
+            vertex(currentX + perpLine.x, currentY+perpLine.y);   
+            vertex(x2+perpLine.x, y2+perpLine.y);  
+
+            vertex(currentX-perpLine.x, currentY-perpLine.y);   
+            vertex(x2-perpLine.x, y2-perpLine.y);  
+          endShape(); 
+        
         }
         else {
          drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
@@ -142,10 +151,17 @@ public void stippledOutline(int x1, int y1, int x2, int y2, int radius, String p
       else {
         if(currentChar=='-'){
             drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
-            drawDash(currentX,currentY,perpLine.x,perpLine.y, currentX-x2, currentY-y2);
+          beginShape(LINES);
+
+            vertex(currentX+perpLine.x, currentY+perpLine.y);   
+            vertex(x2+perpLine.x, y2+perpLine.y);  
+
+            vertex(currentX-perpLine.x, currentY-perpLine.y);   
+            vertex(x2-perpLine.x, y2-perpLine.y);  
+          endShape(); 
         }
         else {
-           drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
+           drawVerticalLine(x2,y2,perpLine.x,perpLine.y);
         }
       }
     }

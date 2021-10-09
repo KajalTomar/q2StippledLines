@@ -1,7 +1,10 @@
-
-
+// Assignment: 1, Q2
+// Name:       Kajal Tomar 
+//
+// ------------------------------------------------------------------------------------
 void stippledOutline(int x1, int y1, int x2, int y2, int radius, String pattern) {
-  PVector line = new PVector(x2 - x1,y2 - y1);
+
+  PVector line = new PVector(x2 - x1,y2 - y1); 
   PVector perpLine = new PVector(-line.y, line.x);
   PVector dash = line.copy();
 
@@ -11,51 +14,51 @@ void stippledOutline(int x1, int y1, int x2, int y2, int radius, String pattern)
   float fullLength = line.mag();
   int numberOfSlots; 
 
-  int patternLocation = 0;
+  int patternLocation = 0; 
   char currentChar = pattern.charAt(patternLocation);
   boolean lastWasDash = (currentChar == '-');
 
-  drawBaseLine(x1, y1, x2, y2, radius);
+  // draw the base line and the caps 
+  drawBaseLine(x1, y1, x2, y2, radius); 
   addCap(x1, y1, x2, y2, radius);
 
+  // normalize the perpendicular line and then scale it the radius 
   perpLine.normalize();
   perpLine.x = perpLine.x * radius;
   perpLine.y = perpLine.y * radius;
 
+  // normalize the dash and then scale it to the correct size 
   dash.normalize();
   dash.x = dash.x * 2 * radius;
   dash.y = dash.y * 2 * radius;
 
+  // split up the line into slots 
   numberOfSlots = (int) (fullLength / dash.mag());
-  
-  // //x1 + perpLine.x => change in x perpindicular
-  // //y1 + perpLine.y => change in x perpindicular
 
-  // if(spotAmount == 0){
-  //   // if - connect
-  //   // if space then |
-  // }
-
-  System.out.println("slots = "+numberOfSlots);
+  // of we can't fit the pattern at all
   if(numberOfSlots == 0){
 
     stroke(255,165,0);
-    System.out.println("char was = "+pattern.charAt(0));
 
+    // just draw the first character in the pattern
+
+    // draw dash
     if(pattern.charAt(0)=='-'){ 
       drawDash(currentX,currentY,perpLine.x,perpLine.y, dash.x, dash.y);  
     } 
     else{
+      // draw the vertical line
       drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
       currentX = x2;
       currentY = y2;
       drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
     }
   }
-  else {
+  else { // the pattern will fit at least once 
     
     patternLocation = 0;
 
+    // go throught every single slot 
     for(int currentSlot = 0; currentSlot < numberOfSlots; currentSlot++){
 
       // to loop through the pattern
@@ -63,9 +66,10 @@ void stippledOutline(int x1, int y1, int x2, int y2, int radius, String pattern)
         patternLocation = 0;
       }
 
+      // read the pattern character by character
       currentChar = pattern.charAt(patternLocation);
 
-      // the very first time! 
+      // the very first time! To set the lastWas variable. 
       if(currentSlot == 0){
         if(currentChar=='-'){ 
           lastWasDash = true;
@@ -76,8 +80,11 @@ void stippledOutline(int x1, int y1, int x2, int y2, int radius, String pattern)
           drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
         }
       }
-      else {
-        if(lastWasDash){
+      else {  
+
+        // draw a dash, space, or vertical according to the last and currecnt 
+        // character in the pattern
+        if(lastWasDash){ 
           if (currentChar=='-'){ 
             lastWasDash = true;
             drawDash(currentX,currentY,perpLine.x,perpLine.y, dash.x, dash.y);  
@@ -96,13 +103,16 @@ void stippledOutline(int x1, int y1, int x2, int y2, int radius, String pattern)
         }
       }
 
+      // update variables 
+
       patternLocation++;
 
       currentX = currentX + dash.x;
       currentY = currentY + dash.y;
 
     }
-
+    
+    // to wrap around to the start of the pattern if needed
     if(patternLocation >= pattern.length()-1 || patternLocation < 0){
         patternLocation = 0;
     }
@@ -112,11 +122,22 @@ void stippledOutline(int x1, int y1, int x2, int y2, int radius, String pattern)
 
     currentChar = pattern.charAt(patternLocation);
 
-    if(currentX != x2 && currentY != y2){
+    // if there is space left over after the pattern has been fit in (as many time as it could have)
+    if(currentX != x2 || currentY != y2){
 
+      // just connect the last bit according to what would have been next in the pattern
       if(lastWasDash){
         if (currentChar=='-'){ 
-         drawDash(currentX,currentY,perpLine.x,perpLine.y, currentX-x2, currentY-y2);
+         stroke(255,165,0);
+          beginShape(LINES);
+
+            vertex(currentX + perpLine.x, currentY+perpLine.y);   
+            vertex(x2+perpLine.x, y2+perpLine.y);  
+
+            vertex(currentX-perpLine.x, currentY-perpLine.y);   
+            vertex(x2-perpLine.x, y2-perpLine.y);  
+          endShape(); 
+        
         }
         else {
          drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
@@ -126,32 +147,26 @@ void stippledOutline(int x1, int y1, int x2, int y2, int radius, String pattern)
       else {
         if(currentChar=='-'){
             drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
-            drawDash(currentX,currentY,perpLine.x,perpLine.y, currentX-x2, currentY-y2);
+          beginShape(LINES);
+
+            vertex(currentX+perpLine.x, currentY+perpLine.y);   
+            vertex(x2+perpLine.x, y2+perpLine.y);  
+
+            vertex(currentX-perpLine.x, currentY-perpLine.y);   
+            vertex(x2-perpLine.x, y2-perpLine.y);  
+          endShape(); 
         }
         else {
-           drawVerticalLine(currentX,currentY,perpLine.x,perpLine.y);
+           drawVerticalLine(x2,y2,perpLine.x,perpLine.y);
         }
       }
     }
 
   }
-  
-  // for(int i = 0; i < spotAmount; i++){
-  //   boolean lastDash = true;
-
-  //   // if last one was dash and now is its a space > cap
-  //   // if last one was space and now its a dash > cap
-  //   // if last one was dash and this dash > draw line
-  //   // if last one was space and  this space > do nothing 
-
-  //   // always > update x and y
-  // }
-
-  // if currentx != x2 or currenty != y2 
-  // based on lastwasdash and current pattern index 
 
 }
 
+// draws dash
 void drawDash(float x, float y, float perpX, float perpY, float dashX, float dashY){
   stroke(255,165,0);
     beginShape(LINES);
@@ -165,6 +180,7 @@ void drawDash(float x, float y, float perpX, float perpY, float dashX, float das
       endShape(); 
 }
 
+// draws the perpindicular line
 void drawVerticalLine(float x, float y, float perpX, float perpY){
   stroke(255,165,0);
     beginShape(LINES);
@@ -178,6 +194,7 @@ void drawVerticalLine(float x, float y, float perpX, float perpY){
       endShape();
 }
 
+// adds the cap
 void addCap(int x1, int y1, int x2, int y2, int radius){
   float angle = atan2(y2-y1,x2-x1);
   float startPointAngle = (angle + PI/2)/(2*PI);
@@ -187,6 +204,7 @@ void addCap(int x1, int y1, int x2, int y2, int radius){
   semicircle(endPointAngle, x2, y2, radius);
 }
 
+// draws the semi circle for the cap
 void semicircle(float startingPoint, int x, int y, int radius){
 
   float circleX, circleY;
@@ -205,6 +223,7 @@ void semicircle(float startingPoint, int x, int y, int radius){
   endShape();
 }
 
+// to draw the original line
 void drawBaseLine(int x1, int y1, int x2, int y2, int radius){
   
   beginShape(LINES);
@@ -217,7 +236,6 @@ void drawBaseLine(int x1, int y1, int x2, int y2, int radius){
     vertex(x2, y2);
 
   endShape();
-
 }
 
 
